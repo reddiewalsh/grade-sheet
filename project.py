@@ -14,7 +14,8 @@ def main():
         grade_sheet = open_grade_sheet(args.class_name, PATH_TO_GRADES)
     except FileNotFoundError:
         sys.exit(f"Error: Class {args.class_name} not found in {PATH_TO_GRADES}")
-    
+    for student in grade_sheet:
+        print(student)
 
 
 def open_grade_sheet(name_of_class: str, path_to_file: str):
