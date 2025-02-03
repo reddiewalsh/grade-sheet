@@ -11,7 +11,7 @@ PATH_TO_GRADES = "sample_gradebook"
 
 def main():
     try:
-        file_path = Path(PATH_TO_GRADES)/ f"{args.class_name}.csv"
+        file_path = Path(PATH_TO_GRADES) / f"{args.class_name}.csv"
         gradesheet = open_gradesheet_csv(file_path)
     except FileNotFoundError:
         sys.exit(f"Error: Class {args.class_name} not found in {PATH_TO_GRADES}")
@@ -20,9 +20,14 @@ def main():
         write_gradesheet_pdf(updated_gradesheet, file_path.replace("csv", "pdf"))
     else:
         assignment = input("Enter Name of Assignment: ").strip().lower()
-        max_score = get_score("Enter max score: ")
-        updated_gradesheet = add_assignment(gradesheet, assignment, max_score)
+        max_score = get_score("Enter max score (5): ", default=5)
+        default_score = get_score("Enter default score (0): ", max=max_score)
+        updated_gradesheet = add_assignment(
+            gradesheet, assignment, max=max_score, default=default_score
+        )
         write_gradesheet_csv(updated_gradesheet, file_path)
+        for row in updated_gradesheet:
+            print(row)
 
 
 def open_gradesheet_csv(path_to_file: str) -> list[dict]:
@@ -32,11 +37,14 @@ def open_gradesheet_csv(path_to_file: str) -> list[dict]:
         return [x for x in reader]
 
 
-def get_score(message: str, max: int = 100) -> int:
+def get_score(message: str, max: int = 100, default: int = 0) -> int:
     """Prompt the user for a score. Scores of -1 are allowed and are considered excused"""
     while True:
         try:
-            score = int(input(message))
+            score = input(message)
+            if score == "":
+                score = default
+            score = int(score)
         except ValueError:
             pass
         else:
@@ -45,25 +53,35 @@ def get_score(message: str, max: int = 100) -> int:
     return score
 
 
-def add_assignment(class_list: list[dict], name_of_assignment: str, max_points: int):
-    '''Add an assignment score for each student in the class'''
+def add_assignment(
+    class_list: list[dict], assignment_name: str, max=100, default=0
+) -> list[dict]:
+    """Add an assignment score for each student in the class"""
     for student in class_list:
         if int(student["seat"]) > 0:
-            student[name_of_assignment] = get_score(
-                f"Enter Score for {student['seat']}: ", max=max_points
+            student[assignment_name] = get_score(
+                f"Enter Score for {student['seat']}: ",
+                max=max,
+                default=default,
             )
         else:
-            student[name_of_assignment] = max_points
+            student[assignment_name] = max
     return class_list
 
-def caculate_score(class_list: list[dict]) -> list[dict]: ...
 
-def write_gradesheet_csv(class_list: list[dict], path:str):
+def calculate_score(class_list: list[dict]) -> list[dict]:
+    ...
+    # check for -1 "excused" scores and add to excused list
+    # add all valid scores together (drop the -1)
+    # add all max scores together
+
+
+def write_gradesheet_csv(class_list: list[dict], path: str):
     # Use list of key names as field names for DictWriter
     key_names = class_list[0].keys()
-    
 
-def write_gradesheet_pdf(class_list: list[dict], path:str): ...
+
+def write_gradesheet_pdf(class_list: list[dict], path: str): ...
 
 
 if __name__ == "__main__":
