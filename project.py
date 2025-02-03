@@ -16,7 +16,7 @@ def main():
     except FileNotFoundError:
         sys.exit(f"Error: Class {args.class_name} not found in {PATH_TO_GRADES}")
     if args.output is True:
-        updated_gradesheet = calculate_score(gradesheet)
+        updated_gradesheet = calculate_scores(gradesheet)
         write_gradesheet_pdf(updated_gradesheet, file_path.replace("csv", "pdf"))
     else:
         assignment = input("Enter Name of Assignment: ").strip().lower()
@@ -71,7 +71,7 @@ def add_assignment(
     return class_list
 
 
-def calculate_score(class_list: list[dict]) -> list[dict]:
+def calculate_scores(class_list: list[dict]) -> list[dict]:
     # get a list of keys in dict
     key_names = class_list[0].keys()
     # Remove non-Assignments (seat, name, id, etc)
