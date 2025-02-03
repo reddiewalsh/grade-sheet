@@ -47,6 +47,8 @@ def get_score(message: str, max: int = 100, default: int = 0) -> int:
             score = int(score)
         except ValueError:
             pass
+        except KeyboardInterrupt:
+            sys.exit("Status: Exited without saving")
         else:
             if -2 < score <= max:
                 break
