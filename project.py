@@ -72,10 +72,21 @@ def add_assignment(
 
 
 def calculate_score(class_list: list[dict]) -> list[dict]:
-    ...
-    # check for -1 "excused" scores and add to excused list
-    # add all valid scores together (drop the -1)
+    # get a list of keys in dict
+    key_names = class_list[0].keys()
+    # Remove non-Assignments (seat, name, id, etc)
+    try:
+        # can I pass in multiple items?
+        key_names.remove("seat", "id", "name")
+    except ValueError:
+        pass
+
     # add all max scores together
+    # loop through all valid students
+    # check for -1 "excused" scores and add to excused list
+    # add all valid scores together (drop the -1) and average
+    # add "total" assignment with average
+    ...
 
 
 def write_gradesheet_csv(class_list: list[dict], path: str):
