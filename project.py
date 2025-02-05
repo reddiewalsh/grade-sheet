@@ -89,7 +89,6 @@ def calculate_scores(class_list: list[dict]) -> list[dict]:
     for assignment in key_names:
         # calculating the max possible points for all assignments
         max_score += int(class_list[0][assignment])
-    class_list[0]["total"] = max_score
     # loop through all valid students
     for student in class_list:
         valid_assignments = key_names
