@@ -88,7 +88,11 @@ def calculate_scores(class_list: list[dict]) -> list[dict]:
     max_score = 0
     for assignment in key_names:
         # calculating the max possible points for all assignments
-        max_score += int(class_list[0][assignment])
+        try:
+            max_score += int(class_list[0][assignment])
+        except ValueError:
+            # if a key contains data that is not an int, exit
+            sys.exit(f"Key [{assignment}] contains invalid int value: {class_list[0][assignment]}")
     # loop through all valid students
     for student in class_list:
         valid_assignments = key_names
@@ -101,7 +105,11 @@ def calculate_scores(class_list: list[dict]) -> list[dict]:
                 student_max -= int(class_list[0][assignment])
             # else add the students score to their total gained points
             else:
-                student_total += int(student[assignment])
+                try:
+                    student_total += int(student[assignment])
+                except ValueError:
+            # if a key contains data that is not an int, exit
+                    sys.exit(f"Key [{assignment}] contains invalid int value: {class_list[0][assignment]}")
         student["total"] = f"{student_total}/{student_max}"
         student_percent = (student_total / student_max) * 100
         student["percent"] = f"{round(student_percent, 2)}%"
