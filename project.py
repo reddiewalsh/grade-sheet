@@ -7,6 +7,8 @@ from parser import args
 # path to grade sheets CSV
 # currently relative to project.py, but later I would like it relative to $HOME and set in a config file or ENV var
 PATH_TO_GRADES = "sample_gradebook"
+# A sequence of keywords to be excluded from the calculated total score
+EXCLUDED_ASSIGNMENTS = ("seat", "id", "name", "report", "speech", "oral")
 
 
 def main():
@@ -17,7 +19,10 @@ def main():
         sys.exit(f"Error: Class {args.class_name} not found in {PATH_TO_GRADES}")
     if args.output is True:
         updated_gradesheet = calculate_scores(gradesheet)
-        write_gradesheet_pdf(updated_gradesheet, file_path.replace("csv", "pdf"))
+        pdf_path = file_path.with_suffix(".pdf")
+        write_gradesheet_pdf(updated_gradesheet, pdf_path)
+        for i in updated_gradesheet:
+            print(i)
     else:
         assignment = input("Enter Name of Assignment: ").strip().lower()
         max_score = get_score("Enter max score (5): ", default=5)
@@ -73,20 +78,35 @@ def add_assignment(
 
 def calculate_scores(class_list: list[dict]) -> list[dict]:
     # get a list of keys in dict
-    key_names = class_list[0].keys()
+    key_names = [x for x in class_list[0].keys()]
     # Remove non-Assignments (seat, name, id, etc)
     try:
-        # can I pass in multiple items?
-        key_names.remove("seat", "id", "name")
+        for i in EXCLUDED_ASSIGNMENTS:
+            key_names.remove(i)
     except ValueError:
         pass
-
-    # add all max scores together
+    max_score = 0
+    for assignment in key_names:
+        # calculating the max possible points for all assignments
+        max_score += int(class_list[0][assignment])
+    class_list[0]["total"] = max_score
     # loop through all valid students
-    # check for -1 "excused" scores and add to excused list
-    # add all valid scores together (drop the -1) and average
-    # add "total" assignment with average
-    ...
+    for student in class_list:
+        valid_assignments = key_names
+        student_max = max_score
+        student_total = 0
+        for assignment in valid_assignments:
+            # check for -1 "excused" scores and remove from total possible points
+            if student[assignment] == "-1":
+                valid_assignments.remove(assignment)
+                student_max -= int(class_list[0][assignment])
+            # else add the students score to their total gained points
+            else:
+                student_total += int(student[assignment])
+        student["total"] = f"{student_total}/{student_max}"
+        student_percent = (student_total / student_max) * 100
+        student["percent"] = f"{round(student_percent, 2)}%"
+    return class_list
 
 
 def write_gradesheet_csv(class_list: list[dict], path: str):
