@@ -30,6 +30,8 @@ def main():
         updated_gradesheet = add_assignment(
             gradesheet, assignment, max=max_score, default=default_score
         )
+        # This File Path Value is a placeholder for testing w/o overwriting the original file
+        file_path = "TEST_PATH.csv"
         write_gradesheet_csv(updated_gradesheet, file_path)
         for row in updated_gradesheet:
             print(row)
@@ -118,7 +120,12 @@ def calculate_scores(class_list: list[dict]) -> list[dict]:
 
 def write_gradesheet_csv(class_list: list[dict], path: str):
     # Use list of key names as field names for DictWriter
-    key_names = class_list[0].keys()
+    key_names = [x for x in class_list[0].keys()]
+    with open(path, 'w', newline="") as csvfile:
+        writer = csv.DictWriter(csvfile, key_names)
+        writer.writeheader()
+        for line in class_list:
+            writer.writerow(line)
 
 
 def write_gradesheet_pdf(class_list: list[dict], path: str): ...
