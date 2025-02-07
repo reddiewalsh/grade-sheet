@@ -6,10 +6,10 @@ RUN apt -y install neovim
 
 RUN pip install pipenv
 
-# COPY ../Pipfile* .
+COPY ../Pipfile* .
 
-# RUN pipenv install --system --dev
+RUN pipenv install --system --dev
 
 COPY .. .
 
-CMD [ "bash" ]
+CMD [ "pipenv shell" ]
