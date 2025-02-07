@@ -23,8 +23,8 @@ def main():
         updated_gradesheet = calculate_scores(gradesheet)
         pdf_path = file_path.with_suffix(".pdf")
         write_gradesheet_pdf(updated_gradesheet, pdf_path)
-        for i in updated_gradesheet:
-            print(i)
+        print(f"PDF outputed to {pdf_path}")
+        sys.exit()
     else:
         assignment = input("Enter Name of Assignment: ").strip().lower()
         max_score = get_score("Enter max score (5): ", default=5)
