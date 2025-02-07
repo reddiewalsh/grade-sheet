@@ -3,12 +3,14 @@ import sys
 import csv
 from pathlib import Path
 from parser import args
+from fpdf import FPDF
 
 # path to grade sheets CSV
 # currently relative to project.py, but later I would like it relative to $HOME and set in a config file or ENV var
 PATH_TO_GRADES = "sample_gradebook"
 # A sequence of keywords to be excluded from the calculated total score
 EXCLUDED_ASSIGNMENTS = ("seat", "id", "name", "report", "speech", "oral")
+PAPER_SIZE = "A4"
 
 
 def main():
@@ -128,7 +130,19 @@ def write_gradesheet_csv(class_list: list[dict], path: str):
             writer.writerow(line)
 
 
-def write_gradesheet_pdf(class_list: list[dict], path: str): ...
+def write_gradesheet_pdf(class_list: list[dict], path: str) -> None:
+    pdf = FPDF(orientation="L", format=PAPER_SIZE)
+    pdf.add_page()
+    pdf.set_font("helvetica", size=10)
+    with pdf.table() as table:
+        row = table.row()
+        for item in class_list[0].keys():
+            row.cell(item)
+        for data_row in class_list:
+            row = table.row()
+            for datum in data_row:
+                row.cell(data_row[datum])
+    pdf.output(path)
 
 
 if __name__ == "__main__":
