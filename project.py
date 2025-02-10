@@ -50,7 +50,7 @@ def get_score(message: str, max: int = 100, default: int = 0) -> int:
     """Prompt the user for a score. Scores of -1 are allowed and are considered excused"""
     while True:
         try:
-            score = input(message)
+            score = input(message).strip()
             if score == "":
                 score = default
             score = int(score)
