@@ -29,7 +29,7 @@ def test_get_score():
 
 def test_add_assignment():
     with patch("builtins.input", side_effect=["5", "10", "9", "-1"]):
-        ...
+        test_gradebook = p.add_assignment(test_class, "test assignment", max=10, default=6)
 
 
 def test_write_gradesheet_csv(): ...
