@@ -169,3 +169,6 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# PDF output of class gradebook should not be kept in VC
+*.pdf
