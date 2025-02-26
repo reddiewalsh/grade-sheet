@@ -11,6 +11,7 @@ PATH_TO_GRADES = "sample_gradebook"
 # A sequence of keywords to be excluded from the calculated total score
 EXCLUDED_ASSIGNMENTS = ("seat", "id", "name", "report", "speech", "oral")
 PAPER_SIZE = "A4"
+SORT_BY = "seat"
 
 
 def main():
@@ -20,7 +21,9 @@ def main():
     except FileNotFoundError:
         sys.exit(f"Error: Class {args.class_name} not found in {PATH_TO_GRADES}")
     if args.output is True:
-        updated_gradesheet = calculate_scores(gradesheet, excluded_assignments=EXCLUDED_ASSIGNMENTS)
+        updated_gradesheet = calculate_scores(
+            gradesheet, excluded_assignments=EXCLUDED_ASSIGNMENTS
+        )
         pdf_path = file_path.with_suffix(".pdf")
         write_gradesheet_pdf(updated_gradesheet, pdf_path)
         print(f"PDF outputed to {pdf_path}")
@@ -30,7 +33,7 @@ def main():
         max_score = get_score("Enter max score (5): ", default=5)
         default_score = get_score("Enter default score (0): ", max=max_score)
         updated_gradesheet = add_assignment(
-            gradesheet, assignment, max=max_score, default=default_score
+            gradesheet, assignment, SORT_BY, max=max_score, default=default_score
         )
         # This File Path Value is a placeholder for testing w/o overwriting the original file
         file_path = "TEST_PATH.csv"
@@ -65,13 +68,17 @@ def get_score(message: str, max: int = 100, default: int = 0) -> int:
 
 
 def add_assignment(
-    class_list: list[dict], assignment_name: str, max=100, default=0
+    class_list: list[dict],
+    assignment_name: str,
+    sort_var: str,
+    max: int = 100,
+    default: int = 0,
 ) -> list[dict]:
     """Add an assignment score for each student in the class"""
     for student in class_list:
-        if int(student["seat"]) > 0:
+        if int(student[sort_var]) > 0:
             student[assignment_name] = get_score(
-                f"Enter Score for {student['seat']}: ",
+                f"Enter Score for {student[sort_var]}: ",
                 max=max,
                 default=default,
             )
@@ -80,7 +87,9 @@ def add_assignment(
     return class_list
 
 
-def calculate_scores(class_list: list[dict], excluded_assignments: list[str] = list()) -> list[dict]:
+def calculate_scores(
+    class_list: list[dict], excluded_assignments: list[str] = list()
+) -> list[dict]:
     # get a list of keys in dict
     key_names = [x for x in class_list[0].keys()]
     # Remove non-Assignments (seat, name, id, etc)
@@ -96,7 +105,9 @@ def calculate_scores(class_list: list[dict], excluded_assignments: list[str] = l
             max_score += int(class_list[0][assignment])
         except ValueError:
             # if a key contains data that is not an int, exit
-            sys.exit(f"Key [{assignment}] contains invalid int value: {class_list[0][assignment]}")
+            sys.exit(
+                f"Key [{assignment}] contains invalid int value: {class_list[0][assignment]}"
+            )
     # loop through all valid students
     for student in class_list:
         valid_assignments = key_names
@@ -112,8 +123,10 @@ def calculate_scores(class_list: list[dict], excluded_assignments: list[str] = l
                 try:
                     student_total += int(student[assignment])
                 except ValueError:
-            # if a key contains data that is not an int, exit
-                    sys.exit(f"Key [{assignment}] contains invalid int value: {class_list[0][assignment]}")
+                    # if a key contains data that is not an int, exit
+                    sys.exit(
+                        f"Key [{assignment}] contains invalid int value: {class_list[0][assignment]}"
+                    )
         student["total"] = f"{student_total}/{student_max}"
         student_percent = (student_total / student_max) * 100
         student["percent"] = f"{round(student_percent, 2)}%"
@@ -123,7 +136,7 @@ def calculate_scores(class_list: list[dict], excluded_assignments: list[str] = l
 def write_gradesheet_csv(class_list: list[dict], path: str):
     # Use list of key names as field names for DictWriter
     key_names = [x for x in class_list[0].keys()]
-    with open(path, 'w', newline="") as csvfile:
+    with open(path, "w", newline="") as csvfile:
         writer = csv.DictWriter(csvfile, key_names)
         writer.writeheader()
         for line in class_list:
