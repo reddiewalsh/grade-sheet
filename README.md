@@ -26,13 +26,13 @@ To install this application:
 
 1. CD into whichever directory you'd like to install the application.
 1. Clone this repository:
-```bash
-git clone https://github.com/reddiewalsh/grade-sheet.git ./
-```
+    ```bash
+    git clone https://github.com/reddiewalsh/grade-sheet.git ./
+    ```
 1. Install dependencies:
-```bash
-pip install -r requirements.txt
-```
+    ```bash
+    pip install -r requirements.txt
+    ```
 
 ###### Creating a Gradesheet:
 
