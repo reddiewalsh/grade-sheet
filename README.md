@@ -43,19 +43,23 @@ If you would like to use this application you will need a valid gradesheet.csv f
 I'm  using the term "seat" to avoid confusion, as Student ID or Student Number is also used in my school as a unique identifier, but doesn't provide much context to who the student is. Later I would like to make this a configurable option to allow for more choices.
 
 
-###### Adding an Assignment:
+#### Adding an Assignment:
 
 1. Type in the command followed by the name of the class you are working on:
-    The name of the class is the same as the name of your CSV file, but you should not include the ~.csv~ extension. 
+   
+   The name of the class is the same as the name of your CSV file, but you should not include the ".csv" extension. \n
+
+
 	```bash
 	python project.py <CLASS_NAME>
 	```
+	
+	
 2. The application will prompt you for the name of your assignment. The name of your assignment can be anything you'd like, but try to keep the names short. Otherwise, you will waste a lot of space on your PDF when you export the class.
-3. The application will prompt you for a maximum score (default = 5): 
+3. The application will prompt you for a maximum score (default = 5): \n
    Please enter the maximum score students could achieve on this assignement. If you leave this blank, a maximum score of 5 will be set automatically. The number 5 was chosen specifically for my class, as most of my scores in classes will be for small homework assignments and classroom participation scores. However, you are free to set any whole number you'd like.
 4. The Application will then prompt you for a default score (default = 0):
-   The default score is what the application will use when a student's score is left blank/skipped. It defaults to zero, but a possible used case for setting the default to another number is if the majority or large portion of the scores are a specific number, you could set that score as the default to quickly enter students' grades with the <Enter> key.
-
-
+   The default score is what the application will use when a student's score is left blank/skipped. It defaults to zero, but a possible use case for setting the default to another number is if the majority or large portion of the scores are a specific number, you could set that score as the default to quickly enter students' grades with the <Enter> key.
+5. After entering the default score for the assignment, the program will prompt the user for each student's score (organized by their "seat" number, from low to high). Not inputting a number will result in using the default number; any number from 0 up to the "Maximum Score" will set the student's score. **If the student is absent or othewise excused from the assignemt, a score of '-1' will remove this assignment from their calculated "Final Score."** All other input is considered invalid and will result in a reprompt.
 
 
